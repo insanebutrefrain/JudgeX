@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Java-Code-Sandbox
+server:
+  port: 8888

@@ -8,7 +8,9 @@
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        <a href="https://yupi.icu" target="_blank"> by insane </a>
+        <a href="https://github.com/insanebutrefrain" target="_blank">
+          by insane
+        </a>
       </a-layout-footer>
     </a-layout>
   </div>

@@ -13,7 +13,7 @@
         >
           <div class="title-bar">
             <img alt="" class="logo" src="../assets/oj-logo.svg" />
-            <div class="title">鱼OJ</div>
+            <div class="title">JudgeX</div>
           </div>
         </a-menu-item>
         <a-menu-item v-for="item in visibleRoutes" :key="item.path"

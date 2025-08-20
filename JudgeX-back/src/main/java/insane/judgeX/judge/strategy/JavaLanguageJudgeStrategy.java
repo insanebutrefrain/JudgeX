@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 默认判题策略
+ * Java判题策略
  */
 public class JavaLanguageJudgeStrategy implements JudgeStrategy {
 

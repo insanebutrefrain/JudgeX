@@ -1,6 +1,6 @@
-# judgex_front
+# judgex_front 基于vue3的前端页面
 
-## 下载相关依赖
+## 下载远程调用生成相关依赖
 
 ```
 npm install openapi-typescript-codegen --save-dev
@@ -35,7 +35,3 @@ npm run build
 ```shell
 npm run lint
 ```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -10,7 +10,6 @@ public class MySecurityManager extends SecurityManager {
     // 检查所有权限
     @Override
     public void checkPermission(Permission perm) {
-
 //        super.checkPermission(perm);
     }
 

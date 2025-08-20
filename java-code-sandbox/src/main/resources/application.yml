@@ -3,3 +3,21 @@ spring:
     name: Java-Code-Sandbox
 server:
   port: 8888
+knife4j:
+  enable: true
+  openapi:
+    title: Knife4j接口文档
+    description: 代码沙箱调用接口
+#    email: xiaoymin@foxmail.com
+#    concat: 八一菜刀
+#    url: https://docs.xiaominfo.com
+#    version: v4.0
+#    license: Apache 2.0
+#    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      test1:
+        group-name: 分组名称
+        api-rule: package
+        api-rule-resources:
+          - insane.controller

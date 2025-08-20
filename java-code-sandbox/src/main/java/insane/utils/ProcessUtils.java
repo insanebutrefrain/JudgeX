@@ -50,7 +50,7 @@ public class ProcessUtils {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
                 List<String> outputList = new ArrayList<>();
                 // 逐行读取
-                String compileOutputLine;
+                String compileOutputLine = null;
                 while ((compileOutputLine = bufferedReader.readLine()) != null) {
                     outputList.add(compileOutputLine);
                 }
@@ -60,7 +60,7 @@ public class ProcessUtils {
                 BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(runProcess.getErrorStream()));
                 List<String> errorOutputList = new ArrayList<>();
                 // 逐行读取
-                String errorCompileOutputLine;
+                String errorCompileOutputLine = null;
                 while ((errorCompileOutputLine = errorBufferedReader.readLine()) != null) {
                     errorOutputList.add(errorCompileOutputLine);
                 }
@@ -89,10 +89,10 @@ public class ProcessUtils {
         try {
             // 正常退出
             System.out.println(opName + "成功");
-
             // 向控制台输入程序
             InputStream inputStream = runProcess.getInputStream();
             OutputStream outputStream = runProcess.getOutputStream();
+            InputStream errorInputStream = runProcess.getErrorStream();
 
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
 
@@ -105,14 +105,23 @@ public class ProcessUtils {
 
             // 分批获取进程的输出
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder compileOutputStringBuilder = new StringBuilder();
+            List<String> outputList = new ArrayList<>();
             // 逐行读取
             String compileOutputLine;
             while ((compileOutputLine = bufferedReader.readLine()) != null) {
-                compileOutputStringBuilder.append(compileOutputLine);
+                outputList.add(compileOutputLine);
             }
-            executeMessage.setMessage(compileOutputStringBuilder.toString());
+            executeMessage.setMessage(StringUtils.join(outputList, "\n"));
 
+            // 分批获取进程的异常输出
+            BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(errorInputStream));
+            List<String> errorOutputList = new ArrayList<>();
+            // 逐行读取
+            String errorCompileOutputLine = null;
+            while ((errorCompileOutputLine = errorBufferedReader.readLine()) != null) {
+                errorOutputList.add(errorCompileOutputLine);
+            }
+            executeMessage.setErrorMessage(StringUtils.join(errorOutputList, "\n"));
             // 退出，记得资源的释放，否则会卡死
             outputStreamWriter.close();
             outputStream.close();

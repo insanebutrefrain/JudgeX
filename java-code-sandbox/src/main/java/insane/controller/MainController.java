@@ -34,12 +34,12 @@ public class MainController {
     @PostMapping("/executeCode")
     public ExecuteCodeRespond executeCode(@RequestBody ExecuteCodeRequest executeCodeRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         // 基本的认证
-        String authHeader = httpServletRequest.getHeader(AUTH_REQUEST_HEADER);
-        if (!AUTH_REQUEST_SECRET.equals(authHeader)) {
-            // 权限不足
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return null;
-        }
+//        String authHeader = httpServletRequest.getHeader(AUTH_REQUEST_HEADER);
+//        if (!AUTH_REQUEST_SECRET.equals(authHeader)) {
+//            // 权限不足
+//            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//            return null;
+//        }
         if (executeCodeRequest == null) {
             throw new RuntimeException("请求参数为空！");
         }

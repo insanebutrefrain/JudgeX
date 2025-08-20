@@ -28,6 +28,7 @@ public class JavaNativeCodeSandBoxOld implements CodeSandBox {
     private static final List<String> blackList = Arrays.asList("Files", "exec");
 
     private static final String SECURITY_MANAGER_PATH = "P:\\IDEA\\java-code-sandbox\\src\\main\\resources\\security";
+
     private static final String SECURITY_MANAGER_CLASS_NAME = "MySecurityManager.java";
 
     private static final WordTree WORD_TREE = new WordTree();

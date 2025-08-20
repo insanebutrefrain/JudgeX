@@ -36,10 +36,18 @@
             <artifactId>docker-java</artifactId>
             <version>3.3.0</version>
         </dependency>
+
         <dependency>
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java-transport-httpclient5</artifactId>
             <version>3.3.0</version>
+        </dependency>
+
+        <!-- Knife4j 自动生成接口文档 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>4.4.0</version>
         </dependency>
 
         <!-- hutool工具类 -->

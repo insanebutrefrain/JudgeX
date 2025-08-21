@@ -1,4 +1,4 @@
-package insane.zzz.securityManager;
+package insane.security;
 
 import java.net.SocketPermission;
 import java.security.Permission;

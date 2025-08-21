@@ -1,8 +1,8 @@
-package insane.implDocker;
+package insane.service;
 
 
-import insane.implDocker.model.ExecuteCodeResponse;
-import insane.common.ExecuteCodeRequest;
+import insane.model.ExecuteCodeRequest;
+import insane.model.ExecuteCodeResponse;
 
 /**
  代码沙箱接口定义

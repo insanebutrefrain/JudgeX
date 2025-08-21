@@ -9,7 +9,6 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class DockerDemo {
 

@@ -1,4 +1,4 @@
-package insane.common;
+package insane.utils;
 
 /*
 禁止库:

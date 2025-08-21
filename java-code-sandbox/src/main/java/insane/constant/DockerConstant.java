@@ -1,4 +1,4 @@
-package insane.implDocker.constant;
+package insane.constant;
 
 import lombok.Data;
 

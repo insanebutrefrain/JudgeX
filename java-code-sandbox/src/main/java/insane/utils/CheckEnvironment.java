@@ -1,4 +1,4 @@
-package insane.implDocker.utils;
+package insane.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

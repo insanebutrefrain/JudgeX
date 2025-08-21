@@ -1,4 +1,4 @@
-package insane.implDocker.model;
+package insane.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

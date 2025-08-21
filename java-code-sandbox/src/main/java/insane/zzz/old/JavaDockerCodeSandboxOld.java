@@ -9,11 +9,11 @@ import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
-import insane.model.ExecuteCodeRequest;
-import insane.model.ExecuteCodeRespond;
-import insane.model.ExecuteMessage;
-import insane.model.JudgeInfo;
-import insane.common.CodeSandbox;
+import insane.common.ExecuteCodeRequest;
+import insane.implNative.model.ExecuteCodeRespond;
+import insane.implNative.model.ExecuteMessage;
+import insane.implNative.model.JudgeInfo;
+import insane.implNative.CodeSandbox;
 import insane.implNative.ProcessUtils;
 import org.springframework.util.StopWatch;
 

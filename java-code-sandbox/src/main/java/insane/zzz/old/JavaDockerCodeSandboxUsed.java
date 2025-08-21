@@ -7,8 +7,8 @@ import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
-import insane.model.ExecuteMessage;
-import insane.common.JavaCodeSandboxTemplate;
+import insane.implNative.model.ExecuteMessage;
+import insane.implNative.JavaCodeSandboxTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 

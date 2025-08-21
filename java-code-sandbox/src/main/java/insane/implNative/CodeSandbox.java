@@ -1,8 +1,8 @@
-package insane.common;
+package insane.implNative;
 
 
-import insane.model.ExecuteCodeRequest;
-import insane.model.ExecuteCodeRespond;
+import insane.common.ExecuteCodeRequest;
+import insane.implNative.model.ExecuteCodeRespond;
 
 public interface CodeSandbox {
     /**

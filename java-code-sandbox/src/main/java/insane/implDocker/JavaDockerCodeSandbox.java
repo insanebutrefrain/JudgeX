@@ -15,7 +15,7 @@ import insane.implDocker.enums.ExecuteStatus;
 import insane.implDocker.model.ExecuteCodeResponse;
 import insane.implDocker.model.ExecuteMessage;
 import insane.implDocker.utils.CheckEnvironment;
-import insane.model.ExecuteCodeRequest;
+import insane.common.ExecuteCodeRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

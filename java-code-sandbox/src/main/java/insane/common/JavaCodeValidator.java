@@ -1,4 +1,4 @@
-package insane.implDocker.utils;
+package insane.common;
 
 /*
 禁止库:

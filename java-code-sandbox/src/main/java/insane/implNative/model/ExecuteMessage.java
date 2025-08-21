@@ -1,4 +1,4 @@
-package insane.model;
+package insane.implNative.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

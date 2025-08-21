@@ -7,9 +7,9 @@ import insane.implDocker.enums.ExecuteStatus;
 import insane.implDocker.model.ExecuteCaseInfo;
 import insane.implDocker.model.ExecuteCodeResponse;
 import insane.implDocker.model.ExecuteMessage;
-import insane.implDocker.utils.JavaCodeValidator;
+import insane.common.JavaCodeValidator;
 import insane.implDocker.utils.JavaProcessUtil;
-import insane.model.ExecuteCodeRequest;
+import insane.common.ExecuteCodeRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

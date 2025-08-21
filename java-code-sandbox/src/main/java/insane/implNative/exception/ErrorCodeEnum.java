@@ -1,4 +1,4 @@
-package insane.exception;
+package insane.implNative.exception;
 
 import lombok.Getter;
 

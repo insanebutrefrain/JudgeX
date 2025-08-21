@@ -1,7 +1,8 @@
 package insane.controller;
 
-import insane.model.ExecuteCodeRequest;
-import insane.model.ExecuteCodeRespond;
+import insane.implDocker.JavaDockerCodeSandbox;
+import insane.implDocker.model.ExecuteCodeResponse;
+import insane.common.ExecuteCodeRequest;
 import insane.implNative.JavaNativeCodeSandbox;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,8 @@ public class MainController {
     @Resource
     private JavaNativeCodeSandbox javaNativeCodeSandBox;
 
-//    @Resource
-//    private JavaDockerCodeSandBox javaDockerCodeSandBox;
+    @Resource
+    private JavaDockerCodeSandbox javaDockerCodeSandbox;
 
     /**
      * 执行代码
@@ -31,7 +32,7 @@ public class MainController {
      * @return
      */
     @PostMapping("/executeCode")
-    public ExecuteCodeRespond executeCode(@RequestBody ExecuteCodeRequest executeCodeRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public ExecuteCodeResponse executeCode(@RequestBody ExecuteCodeRequest executeCodeRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         // 基本的认证
 //        String authHeader = httpServletRequest.getHeader(AUTH_REQUEST_HEADER);
 //        if (!AUTH_REQUEST_SECRET.equals(authHeader)) {
@@ -42,7 +43,8 @@ public class MainController {
         if (executeCodeRequest == null) {
             throw new RuntimeException("请求参数为空！");
         }
-        return javaNativeCodeSandBox.executeCode(executeCodeRequest);
+        return javaDockerCodeSandbox.executeCode(executeCodeRequest);
+//        return javaNativeCodeSandBox.executeCode(executeCodeRequest);
     }
 
 

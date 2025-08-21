@@ -1,4 +1,4 @@
-package insane.exception;
+package insane.implNative.exception;
 
 public class CodeException extends RuntimeException {
 

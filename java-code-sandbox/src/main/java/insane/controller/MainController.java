@@ -2,8 +2,7 @@ package insane.controller;
 
 import insane.model.ExecuteCodeRequest;
 import insane.model.ExecuteCodeRespond;
-import insane.service.JavaDockerCodeSandBox;
-import insane.service.JavaNativeCodeSandBox;
+import insane.implNative.JavaNativeCodeSandbox;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +19,10 @@ public class MainController {
     private static final String AUTH_REQUEST_SECRET = "secret";
 
     @Resource
-    private JavaNativeCodeSandBox javaNativeCodeSandBox;
+    private JavaNativeCodeSandbox javaNativeCodeSandBox;
 
-    @Resource
-    private JavaDockerCodeSandBox javaDockerCodeSandBox;
+//    @Resource
+//    private JavaDockerCodeSandBox javaDockerCodeSandBox;
 
     /**
      * 执行代码

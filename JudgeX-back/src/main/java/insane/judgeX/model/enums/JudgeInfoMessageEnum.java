@@ -14,26 +14,19 @@ public enum JudgeInfoMessageEnum {
 
     ACCEPTED("成功", "Accepted"),
 
-    WRONG_ANSWER("答案错误", "Wrong Answer"),
-
     COMPILE_ERROR("编译错误", "Compile Error"),
+
+    WRONG_ANSWER("答案错误", "Wrong Answer"),
 
     MEMORY_LIMIT_EXCEEDED("内存超限", "Memory Limit Exceeded"),
 
     TIME_LIMIT_EXCEEDED("时间超限", "Time Limit Exceeded"),
 
-    PRESENTATION_ERROR("答案错误", "Presentation Error"),
-
-    WAITING("等待中", "Waiting"),
-
-    OUTPUT_LIMIT_EXCEEDED("输出超限", "Output Limit Exceeded"),
-
     DANGEROUS_OPERATION("危险操作", "Dangerous Operation"),
 
     RUNTIME_ERROR("运行错误", "Runtime Error"),
 
-    SYSTEM_ERROR("系统错误", "Syntax Error"),
-    ;
+    SYSTEM_ERROR("系统错误", "Syntax Error"),;
 
     private final String text;
 

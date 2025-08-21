@@ -4,6 +4,9 @@ import insane.judgeX.judge.codesandbox.model.ExecuteCodeRequest;
 import insane.judgeX.judge.codesandbox.model.ExecuteCodeRespond;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 代码沙箱代理
+ */
 @Slf4j
 public class CodeSandBoxProxy implements CodeSandBox {
 

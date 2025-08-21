@@ -18,7 +18,18 @@ public enum QuestionSubmitStatusEnum {
 
     SUCCEED("成功", 2),
 
-    FAILED("失败", 3);
+    CompileError("编译错误", 3),
+
+    TIME_LIMIT_EXCEEDED("运行超时", 4),
+
+    MEMORY_LIMIT_EXCEEDED("内存超限", 5),
+
+    STACK_LIMIT_EXCEEDED("堆栈超限", 6),
+
+    WRONG_ANSWER("答案错误", 7),
+
+    RUNTIME_ERROR("运行错误", 8);
+
 
     private final String text;
 

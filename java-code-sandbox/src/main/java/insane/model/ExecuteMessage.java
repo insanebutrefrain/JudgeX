@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 public class ExecuteMessage {
     /**
      * 进程退出值
+     *
      */
-    private Integer exitValue;
+    private Integer processExitCode;
 
     /**
      * 进程执行信息

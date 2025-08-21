@@ -24,6 +24,9 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 判题服务实现类
+ */
 @Service
 public class JudgeServiceImpl implements JudgeService {
 
@@ -38,6 +41,11 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private JudgeManager judgeManager;
 
+    /**
+     * 执行判题
+     * @param questionSubmitId
+     * @return
+     */
     @Override
     public QuestionSubmit doJudge(long questionSubmitId) {
         // 1. 传入题目的提交id，获取到对应的题目、提交信息（包含代码、编程语言等）

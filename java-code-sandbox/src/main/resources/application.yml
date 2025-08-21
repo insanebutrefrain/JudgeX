@@ -3,6 +3,10 @@ spring:
     name: Java-Code-Sandbox
 server:
   port: 8888
+docker:
+  imageName: openjdk:8-jre-alpine
+  firstInitImage: false
+  PreContainers: 10 # 预创建容器数
 knife4j:
   enable: true
   openapi:

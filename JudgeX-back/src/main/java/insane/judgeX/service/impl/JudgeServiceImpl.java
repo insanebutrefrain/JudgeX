@@ -44,10 +44,10 @@ public class JudgeServiceImpl implements JudgeService {
     String codeSandBoxType;
 
     /**
-     判题
-
-     @param questionSubmitId 题目id
-     @return 提交记录
+     * 判题
+     *
+     * @param questionSubmitId 题目id
+     * @return 提交记录
      */
     @Override
     public QuestionSubmit doJudge(long questionSubmitId) {
@@ -74,7 +74,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     校验提交id是否存在
+     * 校验提交id是否存在
      */
     private QuestionSubmit validateAndGetQuestionSubmit(long questionSubmitId) {
         QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
@@ -92,7 +92,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     校验题目是否存在
+     * 校验题目是否存在
      */
     private Question validateAndGetQuestion(long questionId) {
         Question question = questionService.getById(questionId);
@@ -103,7 +103,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     更新判题状态, 幂等处理
+     * 更新判题状态, 幂等处理
      */
     private void updateQuestionSubmitStatusToRunning(long questionSubmitId) {
         boolean updated = questionSubmitService.update()
@@ -117,7 +117,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     调用代码沙箱
+     * 调用代码沙箱
      */
     private ExecuteCodeResponse executeCodeSandbox(QuestionSubmit questionSubmit, List<JudgeCase> judgeCaseList) {
         String language = questionSubmit.getLanguage();
@@ -133,7 +133,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     处理判题结果
+     * 处理判题结果
      */
     private QuestionSubmit processJudgeResult(long questionSubmitId, Question question, List<JudgeCase> judgeCaseList, ExecuteCodeResponse executeCodeResponse) {
         List<String> outputList = judgeCaseList.stream().map(JudgeCase::getOutput).collect(Collectors.toList());
@@ -165,9 +165,9 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     处理每个用例的结果
-     含有错误 -> handleGlobalErrorCases
-     不含错误 -> handleNormalCases
+     * 处理每个用例的结果
+     * 含有错误 -> handleGlobalErrorCases
+     * 不含错误 -> handleNormalCases
      */
     private List<JudgeInfo> handleExecuteResponse(ExecuteCodeResponse executeCodeResponse, List<String> outputList,
                                                   JudgeConfig judgeConfig, int caseCount) {
@@ -188,7 +188,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     处理含有错误的用例输出情况
+     * 处理含有错误的用例输出情况
      */
     private void handleGlobalErrorCases(List<JudgeInfo> judgeInfoList, ExecuteErrorMessageEnum errorEnum,
                                         String errorMessage, List<ExecuteCaseInfo> executeCaseInfoList,
@@ -252,8 +252,8 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     将 ExecuteErrorMessageEnum 映射为 JudgeInfoMessageEnum
-     null -> SYSTEM_ERROR
+     * 将 ExecuteErrorMessageEnum 映射为 JudgeInfoMessageEnum
+     * null -> SYSTEM_ERROR
      */
     private static JudgeInfoMessageEnum convertExecuteErrorToJudgeResult(ExecuteErrorMessageEnum errorEnum) {
         if (errorEnum == null) {
@@ -278,7 +278,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     处理判题服务出现错误
+     * 处理判题服务出现错误
      */
     private void handleJudgeException(long questionSubmitId, String errorMessage) {
         QuestionSubmit questionSubmitUpdate = new QuestionSubmit();
@@ -295,7 +295,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     判题用例结果
+     * 判题用例结果
      */
     private static JudgeInfoMessageEnum determineCaseResult(String stdOutput, String errorMessage,
                                                             String caseOutput, Long time, JudgeConfig judgeConfig, Long memory) {
@@ -314,7 +314,7 @@ public class JudgeServiceImpl implements JudgeService {
     }
 
     /**
-     判断总体结果
+     * 判断总体结果
      */
     private static JudgeInfoMessageEnum determineFinalResult(List<JudgeInfo> judgeInfoList) {
         if (judgeInfoList == null || judgeInfoList.isEmpty()) {

@@ -1,4 +1,3 @@
-# 公共配置文件 R
 server:
   address: 0.0.0.0
   port: 8081
@@ -7,39 +6,31 @@ server:
 spring:
   application:
     name: JudgeX-back
-  # 默认 dev 环境
   profiles:
     active: dev
-  # 支持 swagger3
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/judgex
     username: root
     password: 123456
-  # 文件上传
   servlet:
     multipart:
-      max-file-size: 10MB # 大小限制
-
+      max-file-size: 10MB
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
-      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
-      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
-      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
-
-# 代码沙箱配置
+      logic-delete-field: isDelete
+      logic-not-delete-value: 0
+      logic-delete-value: 1
 codesandbox:
   defaultType: remote
-
 file:
   prefix:
-    user-dir: user  # user/userId/version/avatar.xxx
-    judge-case-dir: judge-case  # judge-case/questionId/version/inx.txt|outx.txt
+    user-dir: user
+    judge-case-dir: judge-case

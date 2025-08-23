@@ -3,7 +3,6 @@ package insane.judgeX.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.gson.Gson;
 import insane.judgeX.common.ErrorCode;
 import insane.judgeX.constant.CommonConstant;
 import insane.judgeX.exception.BusinessException;
@@ -24,31 +23,23 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author 32461
- * @description 针对表【question(题目)】的数据库操作Service实现
- * @createDate 2025-08-05 03:19:18
- */
+ @author 32461
+ @description 针对表【question(题目)】的数据库操作Service实现
+ @createDate 2025-08-02 15:17:00 */
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         implements QuestionService {
 
-    private final static Gson GSON = new Gson();
-
     @Resource
     private UserService userService;
-
-    /**
-     * 校验题目是否合法
-     *
-     * @param question
-     * @param add
-     */
+ 
     @Override
     public void validQuestion(Question question, boolean add) {
         if (question == null) {
@@ -56,14 +47,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         }
         String title = question.getTitle();
         String content = question.getContent();
-        String tags = question.getTags();
+        String tagList = question.getTagList();
         String answer = question.getAnswer();
-        String judgeCase = question.getJudgeCase();
         String judgeConfig = question.getJudgeConfig();
 
         // 创建时，参数不能为空
         if (add) {
-            ThrowUtils.throwIf(StringUtils.isAnyBlank(title, content, tags), ErrorCode.PARAMS_ERROR);
+            ThrowUtils.throwIf(StringUtils.isAnyBlank(title, content, tagList), ErrorCode.PARAMS_ERROR);
         }
         // 有参数则校验
         if (StringUtils.isNotBlank(title) && title.length() > 80) {
@@ -72,64 +62,19 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         if (StringUtils.isNotBlank(content) && content.length() > 8192) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "内容过长");
         }
-        if (StringUtils.isNotBlank(tags) && tags.length() > 128) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "标签过长");
-        }
         if (StringUtils.isNotBlank(answer) && answer.length() > 8192) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "答案过长");
-        }
-        if (StringUtils.isNotBlank(judgeCase) && judgeCase.length() > 8192) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "判题用例过长");
         }
         if (StringUtils.isNotBlank(judgeConfig) && judgeConfig.length() > 8192) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "判题配置过长");
         }
     }
 
-    /**
-     * 获取查询包装类（用户可能根据哪些字段查询,根据前端传来的请求对象，得到 mybatis 框架支持的 QueryWrapper 类）
-     *
-     * @param questionQueryRequest
-     * @return
-     */
-    @Override
-    public QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest) {
-        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
-        if (questionQueryRequest == null) {
-            return queryWrapper;
-        }
-        Long id = questionQueryRequest.getId();
-        String title = questionQueryRequest.getTitle();
-        String content = questionQueryRequest.getContent();
-        List<String> tags = questionQueryRequest.getTags();
-        String answer = questionQueryRequest.getAnswer();
-        Long userId = questionQueryRequest.getUserId();
-        String sortField = questionQueryRequest.getSortField();
-        String sortOrder = questionQueryRequest.getSortOrder();
-
-
-        // 拼接查询条件
-        queryWrapper.like(StringUtils.isNotBlank(title), "title", title);
-        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
-        queryWrapper.like(StringUtils.isNotBlank(answer), "answer", answer);
-        if (CollectionUtils.isNotEmpty(tags)) {
-            for (String tag : tags) {
-                queryWrapper.like("tags", "\"" + tag + "\"");
-            }
-        }
-        queryWrapper.ne(ObjectUtils.isNotEmpty(id), "id", id);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
-        queryWrapper.eq("isDelete", false);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
-                sortField);
-        return queryWrapper;
-    }
-
 
     @Override
     public QuestionVO getQuestionVO(Question question, HttpServletRequest request) {
         QuestionVO questionVO = QuestionVO.objToVo(question);
-        // 1. 关联查询用户信息
+        // 关联查询用户信息
         Long userId = question.getUserId();
         User user = null;
         if (userId != null && userId > 0) {
@@ -147,7 +92,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         if (CollectionUtils.isEmpty(questionList)) {
             return questionVOPage;
         }
-        // 1. 关联查询用户信息
+        // 关联查询用户信息
         Set<Long> userIdSet = questionList.stream().map(Question::getUserId).collect(Collectors.toSet());
         Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
                 .collect(Collectors.groupingBy(User::getId));
@@ -166,6 +111,75 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         questionVOPage.setRecords(questionVOList);
         return questionVOPage;
     }
+
+    /**
+     获取测试用例的版本号
+
+     @param questionId 题目id
+     @return
+     */
+    @Override
+    public String getJudgeCaseVersion(Long questionId) {
+        Question question = getById(questionId);
+        String judgeCaseVersion = question.getJudgeCaseVersion();
+        if (StringUtils.isBlank(judgeCaseVersion)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "未找到测试用例");
+        }
+        return judgeCaseVersion;
+    }
+
+    @Override
+    public String getJudgeCaseVersionNullable(Long questionId) {
+        Question question = getById(questionId);
+        return question.getJudgeCaseVersion();
+    }
+
+    /**
+     获取updateTime~now的题目列表
+
+     @param updateTime 最早更新时间
+     @return
+     */
+    @Override
+    public List<Question> listQuestionsAfterUpdateTime(Date updateTime) {
+        return this.lambdaQuery()
+                .ge(Question::getUpdateTime, updateTime)
+                .list();
+    }
+
+
+    /**
+     获取查询包装类
+     */
+    @Override
+    public QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest) {
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+        if (questionQueryRequest == null) {
+            return queryWrapper;
+        }
+        Long id = questionQueryRequest.getId();
+        String searchText = questionQueryRequest.getTitle();
+        List<String> tagList = questionQueryRequest.getTagList();
+        Long userId = questionQueryRequest.getUserId();
+        String sortField = questionQueryRequest.getSortField();
+        String sortOrder = questionQueryRequest.getSortOrder();
+
+        // 拼接查询条件
+        queryWrapper.like(StringUtils.isNotBlank(searchText), "title", searchText);
+        if (CollectionUtils.isNotEmpty(tagList)) {
+            for (String tag : tagList) {
+                queryWrapper.like("tagList", "\"" + tag + "\"");
+            }
+        }
+        queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
+        queryWrapper.eq("isDelete", false);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField),
+                sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
+                sortField);
+        return queryWrapper;
+    }
+
 
 }
 

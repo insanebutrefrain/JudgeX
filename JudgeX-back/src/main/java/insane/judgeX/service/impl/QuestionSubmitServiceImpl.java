@@ -6,19 +6,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import insane.judgeX.common.ErrorCode;
 import insane.judgeX.constant.CommonConstant;
 import insane.judgeX.exception.BusinessException;
-import insane.judgeX.judge.JudgeService;
 import insane.judgeX.mapper.QuestionSubmitMapper;
-import insane.judgeX.model.dto.qustionsubmit.QuestionSubmitAddRequest;
-import insane.judgeX.model.dto.qustionsubmit.QuestionSubmitQueryRequest;
+import insane.judgeX.model.dto.questionSubmit.QuestionSubmitAddRequest;
+import insane.judgeX.model.dto.questionSubmit.QuestionSubmitQueryRequest;
 import insane.judgeX.model.entity.Question;
 import insane.judgeX.model.entity.QuestionSubmit;
 import insane.judgeX.model.entity.User;
+import insane.judgeX.model.enums.JudgeInfoMessageEnum;
 import insane.judgeX.model.enums.QuestionSubmitLanguageEnum;
 import insane.judgeX.model.enums.QuestionSubmitStatusEnum;
 import insane.judgeX.model.vo.QuestionSubmitVO;
+import insane.judgeX.service.JudgeService;
 import insane.judgeX.service.QuestionService;
 import insane.judgeX.service.QuestionSubmitService;
-import insane.judgeX.service.UserService;
 import insane.judgeX.utils.SqlUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -31,71 +31,66 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-/**
- * @author 32461
- * @description 针对表【question_submit(题目提交表)】的数据库操作Service实现
- * @createDate 2025-08-05 03:20:03
- */
 @Service
-public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit> implements QuestionSubmitService {
+public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
+        implements QuestionSubmitService {
+
     @Resource
     private QuestionService questionService;
-    @Resource
-    private UserService userService;
 
     @Resource
     @Lazy
     private JudgeService judgeService;
 
     /**
-     * 题目提交
-     *
-     * @param questionSubmitAddRequest
-     * @param loginUser
-     * @return
+     提交题目
+
+     @param questionSubmitAddRequest
+     @param loginUser
+     @return 提交记录id
      */
     @Override
     public long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
-        // 校验编程语言是否合法
+        // 校验语言是否合法
         String language = questionSubmitAddRequest.getLanguage();
         QuestionSubmitLanguageEnum languageEnum = QuestionSubmitLanguageEnum.getEnumByValue(language);
         if (languageEnum == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "编程语言错误");
         }
-        long questionId = questionSubmitAddRequest.getQuestionId();
+        String code = questionSubmitAddRequest.getCode();
+
+        Long questionId = questionSubmitAddRequest.getQuestionId();
         // 判断实体是否存在，根据类别获取实体
         Question question = questionService.getById(questionId);
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        // 是否已题目提交
+        // 是否已提交题目
         long userId = loginUser.getId();
-        // 每个用户串行题目提交
+        // 每个用户串行提交题目
         QuestionSubmit questionSubmit = new QuestionSubmit();
-        questionSubmit.setUserId(userId);
         questionSubmit.setQuestionId(questionId);
-        questionSubmit.setCode(questionSubmitAddRequest.getCode());
+        questionSubmit.setUserId(userId);
+        questionSubmit.setCode(code);
         questionSubmit.setLanguage(language);
-        // 设置初始状态
-        questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING.getValue());
-        questionSubmit.setJudgeInfo("{}");
-        boolean save = this.save(questionSubmit);
-        if (!save) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "插入数据失败");
+        questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING );
+        questionSubmit.setJudgeInfoList("[]"); // 初始化空判题结果
+        questionSubmit.setJudgeResult(JudgeInfoMessageEnum.WAITING );
+        boolean result = save(questionSubmit);
+        if (!result) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目提交失败");
         }
-        // 异步执行判题
         Long questionSubmitId = questionSubmit.getId();
-        CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
-        });
+        // 调用判题服务
+        CompletableFuture.runAsync(() -> judgeService.doJudge(questionSubmitId));
         return questionSubmitId;
     }
 
     /**
-     * 获取查询包装类（用户可能根据哪些字段查询,根据前端传来的请求对象，得到 mybatis 框架支持的 QueryWrapper 类）
-     *
-     * @param questionSubmitQueryRequest
-     * @return
+     获取查询包装类
+
+     @param questionSubmitQueryRequest
+     @return
      */
     @Override
     public QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
@@ -103,55 +98,48 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (questionSubmitQueryRequest == null) {
             return queryWrapper;
         }
-        String language = questionSubmitQueryRequest.getLanguage();
-        Integer status = questionSubmitQueryRequest.getStatus();
         Long questionId = questionSubmitQueryRequest.getQuestionId();
         Long userId = questionSubmitQueryRequest.getUserId();
+        String language = questionSubmitQueryRequest.getLanguage();
+        Integer status = questionSubmitQueryRequest.getStatus();
+        String judgeResult = questionSubmitQueryRequest.getJudgeResult();
+
         String sortField = questionSubmitQueryRequest.getSortField();
         String sortOrder = questionSubmitQueryRequest.getSortOrder();
-
-
         // 拼接查询条件
-
-        queryWrapper.ne(StringUtils.isNotBlank(language), "language", language);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(questionId), "questionId", questionId);
-        queryWrapper.eq(QuestionSubmitStatusEnum.getEnumByValue(status) != null, "status", status);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
+        queryWrapper.eq(StringUtils.isNotBlank(language), "language", language);
+        queryWrapper.eq(QuestionSubmitStatusEnum.isValid(status), "status", status);
+        queryWrapper.eq(StringUtils.isNotBlank(judgeResult), "judgeResult", judgeResult);
         queryWrapper.eq("isDelete", false);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
-                sortField);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField),
+                sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;
     }
 
-
     @Override
-    public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser) {
-        QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
-        // 脱敏：仅本人和管理员可以看见（提交userID和登录用户userID不同）提交的答案
-        long userId = questionSubmit.getUserId();
-        // 处理脱敏
-        if (userId != loginUser.getId() && !userService.isAdmin(loginUser)) {
-            questionSubmitVO.setCode(null);
-        }
-
-
-        return questionSubmitVO;
+    public QuestionSubmitVO getQuestionSubmitVO(Long questionSubmitId) {
+        QuestionSubmit byId = getById(questionSubmitId);
+        return QuestionSubmitVO.objToVo(byId);
     }
 
     @Override
-    public Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage, User loginUser) {
+    public Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage) {
         List<QuestionSubmit> questionSubmitList = questionSubmitPage.getRecords();
-        Page<QuestionSubmitVO> questionSubmitVOPage = new Page<>(questionSubmitPage.getCurrent(), questionSubmitPage.getSize(), questionSubmitPage.getTotal());
+        Page<QuestionSubmitVO> questionSubmitVOPage = new Page<>(
+                questionSubmitPage.getCurrent(),
+                questionSubmitPage.getSize(),
+                questionSubmitPage.getTotal());
         if (CollectionUtils.isEmpty(questionSubmitList)) {
             return questionSubmitVOPage;
         }
-        List<QuestionSubmitVO> questionSubmitVOList = questionSubmitList.stream().map(questionSubmit -> {
-            return getQuestionSubmitVO(questionSubmit, loginUser);
-        }).collect(Collectors.toList());
+        List<QuestionSubmitVO> questionSubmitVOList = questionSubmitList.stream()
+                .map(QuestionSubmitVO::objToVo)
+                .collect(Collectors.toList());
         questionSubmitVOPage.setRecords(questionSubmitVOList);
         return questionSubmitVOPage;
     }
-
 }
 
 

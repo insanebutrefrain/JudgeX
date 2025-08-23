@@ -50,8 +50,6 @@ public class ProcessUtils {
         ExecuteMessage executeMessage = new ExecuteMessage();
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        int exitCode = process.waitFor();
-        executeMessage.setProcessExitCode(exitCode);
         // 向控制台输入程序
         OutputStream outputStream = process.getOutputStream();
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
@@ -71,9 +69,8 @@ public class ProcessUtils {
         // 停止计时
         stopWatch.stop();
         executeMessage.setTime(stopWatch.getTotalTimeMillis());
-        if (exitCode != 0) {
-            throw new RuntimeException("运行错误");
-        }
+        int exitCode = process.waitFor();
+        executeMessage.setProcessExitCode(exitCode);
         return executeMessage;
     }
 
@@ -89,8 +86,6 @@ public class ProcessUtils {
         // 开始计时
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        int exitCode = process.waitFor();
-        executeMessage.setProcessExitCode(exitCode);
         // 等待程序执行，获取错误码
         int exitValue = process.waitFor();
         executeMessage.setProcessExitCode(exitValue);

@@ -1,13 +1,13 @@
 package insane.service;
 
 import cn.hutool.core.io.FileUtil;
-import insane.model.ExecuteCodeRequest;
-import insane.utils.JavaCodeValidator;
 import insane.enums.ExecuteErrorMessageEnum;
 import insane.enums.ExecuteStatus;
 import insane.model.ExecuteCaseInfo;
+import insane.model.ExecuteCodeRequest;
 import insane.model.ExecuteCodeResponse;
 import insane.model.ExecuteMessage;
+import insane.utils.JavaCodeValidator;
 import insane.utils.ProcessUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +48,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandbox {
     /**
      * 安全策略文件路径
      */
-    protected final String POLICY_PATH = JavaCodeSandboxTemplate.class.getClassLoader().getResource("security.policy").toString();
+    protected final String POLICY_PATH = "file" + USER_DIR + File.separator + "security.policy";
 
     /**
      * 完整流程

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Java原生实现（直接复用实现）
+ * Java原生实现
  */
 @Service
 public class JavaNativeCodeSandbox extends JavaCodeSandboxTemplate {

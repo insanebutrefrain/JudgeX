@@ -6,39 +6,45 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 更新请求
- *
+ 更新请求
  */
 @Data
 public class QuestionUpdateRequest implements Serializable {
-
-    private static final long serialVersionUID = 1L;
     /**
-     * id
+     id
      */
     private Long id;
+
     /**
-     * 标题
+     标题
      */
     private String title;
+
     /**
-     * 内容
+     内容
      */
     private String content;
+
     /**
-     * 标签列表
+     标签
      */
-    private List<String> tags;
+    private List<String> tagList;
+
     /**
-     * 题目答案
+     标准答案
      */
     private String answer;
+
+
     /**
-     * 判题用例（json 数组）
-     */
-    private List<JudgeCase> judgeCase;
-    /**
-     * 判题配置（json 对象）
+     判题配置
      */
     private JudgeConfig judgeConfig;
+
+    /**
+     是否删除
+     */
+    private Integer isDelete;
+
+    private static final long serialVersionUID = 1L;
 }

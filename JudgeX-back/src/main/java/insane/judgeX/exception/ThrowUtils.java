@@ -1,10 +1,12 @@
 package insane.judgeX.exception;
 
+
 import insane.judgeX.common.ErrorCode;
 
 /**
  * 抛异常工具类
  *
+
  */
 public class ThrowUtils {
 

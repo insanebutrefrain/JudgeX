@@ -30,7 +30,7 @@ public class MainController {
      * @return
      */
     @PostMapping("/executeCode")
-    public ExecuteCodeResponse executeCode(@RequestBody ExecuteCodeRequest executeCodeRequest, @RequestParam Optional<String> type, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public ExecuteCodeResponse executeCode(@RequestBody ExecuteCodeRequest executeCodeRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         // 基本的认证
 //        String authHeader = httpServletRequest.getHeader(AUTH_REQUEST_HEADER);
 //        if (!AUTH_REQUEST_SECRET.equals(authHeader)) {
@@ -41,7 +41,6 @@ public class MainController {
         if (executeCodeRequest == null) {
             throw new RuntimeException("请求参数为空！");
         }
-//        return "java".equals(type.toString()) ? javaNativeCodeSandBox.executeCode(executeCodeRequest) : javaDockerCodeSandbox.executeCode(executeCodeRequest);
         return javaNativeCodeSandBox.executeCode(executeCodeRequest);
 //        return javaDockerCodeSandbox.executeCode(executeCodeRequest);
     }

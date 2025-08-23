@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 问题提交业务类型枚举
- *
+ 题目提交状态枚举
  */
 public enum QuestionSubmitLanguageEnum {
 
-    JAVA("Java", "java"), CPLUSPLUS("C++", "cpp"), GOLANG("Go", "go");
+    JAVA("java", "java"),
+    CPP("cpp", "cpp"),
+    PYTHON("python", "python"),
+    GO("go", "go");
 
     private final String text;
 
@@ -24,19 +26,19 @@ public enum QuestionSubmitLanguageEnum {
     }
 
     /**
-     * 获取值列表
-     *
-     * @return
+     获取值列表
+
+     @return
      */
     public static List<String> getValues() {
         return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
     }
 
     /**
-     * 根据 value 获取枚举
-     *
-     * @param value
-     * @return
+     根据 value 获取枚举
+
+     @param value
+     @return
      */
     public static QuestionSubmitLanguageEnum getEnumByValue(String value) {
         if (ObjectUtils.isEmpty(value)) {

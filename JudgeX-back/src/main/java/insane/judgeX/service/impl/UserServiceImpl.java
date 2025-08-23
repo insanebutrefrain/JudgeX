@@ -19,25 +19,25 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static insane.judgeX.constant.UserConstant.USER_LOGIN_STATE;
-
 /**
- * 用户服务实现
- *
+ 用户服务实现
  */
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     /**
-     * 盐值，混淆密码
+     盐值，混淆密码
      */
-    private static final String SALT = "insane";
+    private static final String SALT = "jjdx";
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -64,7 +64,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
             // 2. 加密
-            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+            String encryptPassword = DigestUtils.md5DigestAsHex(
+                    (SALT + userPassword).getBytes(StandardCharsets.UTF_8) // 明确指定编码
+            );
             // 3. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
@@ -101,64 +103,60 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
-        // 3. 记录用户的登录态
-        request.getSession().setAttribute(USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
     }
 
+
     /**
-     * 获取当前登录用户
-     *
-     * @param request
-     * @return
+     获取当前登录用户
+
+     @param request
+     @return 未登录则返回null
      */
     @Override
-    public User getLoginUser(HttpServletRequest request) {
+    public User getLoginUserNullable(HttpServletRequest request) {
         // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
-        if (currentUser == null || currentUser.getId() == null) {
+        Object userId = request.getAttribute("userId");
+        if (userId == null) {
+            return null;
+        }
+        // 从数据库查询（追求性能的话可以注释，直接走缓存）
+        return this.getById(userId.toString());
+    }
+
+    /**
+     获取当前登录用户
+
+     @param request
+     @return 未登录则报错
+     */
+    @org.jetbrains.annotations.NotNull
+    @Override
+    public @NotNull User getLoginUser(HttpServletRequest request) {
+        // 先判断是否已登录
+        Object userId = request.getAttribute("userId");
+        if (userId == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
-        long userId = currentUser.getId();
-        currentUser = this.getById(userId);
+        User currentUser = this.getById(userId.toString());
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         return currentUser;
     }
 
-    /**
-     * 获取当前登录用户（允许未登录）
-     *
-     * @param request
-     * @return
-     */
-    @Override
-    public User getLoginUserPermitNull(HttpServletRequest request) {
-        // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
-        if (currentUser == null || currentUser.getId() == null) {
-            return null;
-        }
-        // 从数据库查询（追求性能的话可以注释，直接走缓存）
-        long userId = currentUser.getId();
-        return this.getById(userId);
-    }
 
     /**
-     * 是否为管理员
-     *
-     * @param request
-     * @return
+     是否为管理员
+
+     @param request
+     @return
      */
     @Override
     public boolean isAdmin(HttpServletRequest request) {
         // 仅管理员可查询
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User user = (User) userObj;
+        User user = getLoginUser(request);
         return isAdmin(user);
     }
 
@@ -168,25 +166,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 用户注销
-     *
-     * @param request
+     用户注销
+
+     @param request
      */
     @Override
     public boolean userLogout(HttpServletRequest request) {
-        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
-        }
-        // 移除登录态
-        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        // TODO
         return true;
     }
 
     @Override
     public LoginUserVO getLoginUserVO(User user) {
-        if (user == null) {
-            return null;
-        }
+        if (user == null) return null;
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);
         return loginUserVO;
@@ -194,9 +186,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public UserVO getUserVO(User user) {
-        if (user == null) {
-            return null;
-        }
+        if (user == null) return null;
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
         return userVO;
@@ -233,5 +223,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public String getUserAvatarVersion(Long userId) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        }
+        String userAvatarVersion = user.getUserAvatarVersion();
+        if (StringUtils.isBlank(userAvatarVersion)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "用户未设置头像");
+        }
+        return userAvatarVersion;
+    }
+
+    @Override
+    public String getUserAvatarVersionNullable(Long userId) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        }
+        return user.getUserAvatarVersion();
     }
 }

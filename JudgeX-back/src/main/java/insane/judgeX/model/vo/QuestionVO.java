@@ -1,89 +1,81 @@
 package insane.judgeX.model.vo;
 
-import cn.hutool.json.JSONUtil;
+import com.google.gson.Gson;
 import insane.judgeX.model.dto.question.JudgeConfig;
 import insane.judgeX.model.entity.Question;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
- * 题目视图（脱敏）
+ 题目视图
  */
+@Slf4j
 @Data
 public class QuestionVO implements Serializable {
-    private static final long serialVersionUID = 1L;
+
+    private final static Gson GSON = new Gson();
     /**
-     * id
+     id
      */
     private Long id;
+
     /**
-     * 标题
+     标题
      */
     private String title;
+
     /**
-     * 内容
+     内容
      */
     private String content;
 
-//    /**
-//     * 题目答案
-//     */
-//    private String answer;
     /**
-     * 标签列表（json 数组）
+     标签(json数组)
      */
-    private List<String> tags;
+    private String tagList;
+
     /**
-     * 题目提交数
+     提交数
      */
     private Integer submitNum;
 
-//    /**
-//     * 判题用例（json 数组）
-//     */
-//    private String judgeCase;
     /**
-     * 题目通过数
+     通过数
      */
-    private Integer acceptedNum;
+    private Integer acceptNum;
+
     /**
-     * 判题配置
+     判题配置
      */
     private JudgeConfig judgeConfig;
+
     /**
-     * 点赞数
+     点赞数
      */
     private Integer thumbNum;
+
     /**
-     * 收藏数
+     收藏数
      */
     private Integer favourNum;
+
     /**
-     * 创建用户 id
+     创建用户id
      */
     private Long userId;
     /**
-     * 创建时间
-     */
-    private Date createTime;
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-    /**
-     * 创建题目人的信息
+     创建题目人的信息
      */
     private UserVO userVO;
 
     /**
-     * 包装类转对象
-     *
-     * @param questionVO
-     * @return
+     包装类转对象
+
+     @param questionVO
+     @return
      */
     public static Question voToObj(QuestionVO questionVO) {
         if (questionVO == null) {
@@ -91,23 +83,19 @@ public class QuestionVO implements Serializable {
         }
         Question question = new Question();
         BeanUtils.copyProperties(questionVO, question);
-        List<String> tagList = questionVO.getTags();
-        if (tagList != null) {
-            question.setTags(JSONUtil.toJsonStr(tagList));
-        }
-        JudgeConfig voJudgeConfig = questionVO.getJudgeConfig();
-        if (voJudgeConfig != null) {
-            question.setJudgeConfig(JSONUtil.toJsonStr(voJudgeConfig));
-        }
 
+        JudgeConfig judgeConfig = questionVO.getJudgeConfig();
+        if (judgeConfig != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
+        }
         return question;
     }
 
     /**
-     * 对象转包装类
-     *
-     * @param question
-     * @return
+     对象转包装类
+
+     @param question
+     @return
      */
     public static QuestionVO objToVo(Question question) {
         if (question == null) {
@@ -115,10 +103,12 @@ public class QuestionVO implements Serializable {
         }
         QuestionVO questionVO = new QuestionVO();
         BeanUtils.copyProperties(question, questionVO);
-        List<String> tagList = JSONUtil.<String>toList(question.getTags(), String.class);
-        questionVO.setTags(tagList);
-        String judgeConfigStr = question.getJudgeConfig();
-        questionVO.setJudgeConfig(JSONUtil.toBean(judgeConfigStr, JudgeConfig.class));
+
+        JudgeConfig judgeConfig = GSON.fromJson(question.getJudgeConfig(), JudgeConfig.class);
+        questionVO.setJudgeConfig(judgeConfig);
+
         return questionVO;
     }
+
+    private static final long serialVersionUID = 1L;
 }

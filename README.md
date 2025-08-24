@@ -146,7 +146,7 @@ CompletableFuture.runAsync(() -> {
 
 # judgex_front 基于vue3的前端页面
 
-> 使用组件库：[Arco Design Vue](https://arco.design/vue/docs/start) 
+> 使用组件库：[Arco Design Vue](https://arco.design/vue/docs/start)  
 >  使用的markdown编辑器api: [mdEditor](https://github.com/pd4d10/bytemd)  
 >  使用的代码编辑器编辑器api: [monaco-editor](https://github.com/microsoft/monaco-editor)
 

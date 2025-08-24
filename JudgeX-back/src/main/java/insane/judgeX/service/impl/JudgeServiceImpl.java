@@ -67,7 +67,7 @@ public class JudgeServiceImpl implements JudgeService {
             // 处理判题结果
             return processJudgeResult(questionSubmitId, question, judgeCaseList, executeCodeResponse);
         } catch (Exception e) {
-            log.error("[判题模块]判题系统异常{}", e.getMessage());
+            log.error("[判题模块]判题系统异常{}", e);
             handleJudgeException(questionSubmitId, e.getMessage());  // 处理系统异常
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "判题系统异常 ");
         }

@@ -23,7 +23,6 @@ const route = useRoute();
  * 全局初始化函数
  */
 const doInit = () => {
-  console.log("Hello, 我是绝迹的星");
 }
 onMounted(() => {
   doInit();

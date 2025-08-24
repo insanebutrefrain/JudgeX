@@ -10,9 +10,6 @@
                  alt="Team illustration">
           </div>
         </template>
-        <!--        <a-typography-text class="fun-text">-->
-        <!--          Java是世界上最好的语言!-->
-        <!--        </a-typography-text>-->
       </a-card>
 
       <a-divider orientation="left">
